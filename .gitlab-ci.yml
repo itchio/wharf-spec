@@ -1,0 +1,11 @@
+
+stages:
+  - book
+
+book:
+  stage: test
+  tags:
+    - dropsy
+  script:
+    - scripts/book.sh
+
