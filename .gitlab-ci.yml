@@ -3,7 +3,7 @@ stages:
   - book
 
 book:
-  stage: test
+  stage: book
   tags:
     - dropsy
   script:
