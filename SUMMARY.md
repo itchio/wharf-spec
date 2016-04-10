@@ -10,4 +10,7 @@
   * [Patches (.pwr)](file-formats/patches.md)
   * [Signature files (.pwr.sig)](file-formats/signatures.md)
 * [Appendix](appendix/README.md)
-* [Backend notes](backend.md)
+  * [Backend notes](appendix/backend-notes.md)
+  * [Compression](appendix/compression.md)
+  * [Hashes](appendix/hashes.md)
+  * [Block size](appendix/block-size.md)
