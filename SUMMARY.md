@@ -14,3 +14,4 @@
   * [Compression](appendix/compression.md)
   * [Hashes](appendix/hashes.md)
   * [Block size](appendix/block-size.md)
+  * [Acknowledgements](appendix/acknowledgements.md)
