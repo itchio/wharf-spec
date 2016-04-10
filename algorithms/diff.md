@@ -11,7 +11,7 @@ the following properties:
   * All files of the `new` version are scanned linearly and only once.
   * The more similar `old` is to `new`, the faster the diff runs.
   * Changes are efficiently encoded regardless of their alignment
-  * Renames are transparent and do not increase the diff's size
+  * Renames are detected and handled properly (instead of counting as a deletion + insertion)
 
 [^1]: By "full access" we mean being able to read the files' content. A typical scenario where one does not have "full access" is uploading a new version of some software, to a storage server that holds older versions of it. The storage server only has to send a series of hashes, which is much smaller than the files themselves.
 
