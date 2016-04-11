@@ -296,11 +296,7 @@ for each byte val at index i of potential block {
 The result of this computation is not just `β`, but `β1, β2` too, which will be
 used the next time the head and tail move one byte to the right.
 
-[^2]: By *reasonable* we mean two things: that serializing and deserializing them
-to/from [protobuf format](../file-formats/patches.md) won't require a significant
-amount of memory, and that receiving operations through a non-random-access channel
-such as a network connection will allow us to start patching files without obtaining
-the *entire* patch.
+[^2]: By *reasonable* we mean two things: that serializing and deserializing them to/from [protobuf format](../file-formats/patches.md) won't require a significant amount of memory, and that receiving operations through a non-random-access channel such as a network connection will allow us to start patching files without obtaining the *entire* patch.
 
 ## BlockRange combination
 
