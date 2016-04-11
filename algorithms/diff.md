@@ -457,16 +457,3 @@ To produce the ideal patch described above, all a differ has to do is:
   * When looking for a hash match, if it matches several strong hashes, prioritize
   the one coming from the `preferred file`. This is made possible by the block library
   storing the file index for each block hash.
-
-## Hashing big files (near-zero copy)
-
-The algorithm doesn't require holding an entire file in memory. The [reference
-implementation][refimpl] uses a single `2 * BlockSize + MaxDataOp` buffer, where BlockSize
-is 64kb, and MaxDataOp is 4MB.
-
-[refimpl]: https://github.com/itchio/wharf
-
-Data is read into that buffer, a blockfull at a time. When free space at the end
-of the buffer is insufficient to read another block, the data from the `owed data tail`
-to `head` is copied to the very beginning of the buffer, and the scanning can resume
-as before.
