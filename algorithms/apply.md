@@ -27,16 +27,16 @@ After applying all file operations, the following **post-processing steps** shou
 ## Applying operations
 
 Rebuilding a new file from the content of one or more old files is relatively trivial.
-`DATA` operations contain verbatim data to be written to the file at the current offset.
+DATA operations contain verbatim data to be written to the file at the current offset.
 
-As for `BLOCK_RANGE` operations, they specify:
+As for BLOCK_RANGE operations, they specify:
 
   * which file to read from (op.fileIndex)
   * at which offset (BlockSize * op.blockIndex)
   * and for how many bytes (BlockSize * op.blockSpan)
 
 It is suggested that implementations optimize resource usage by maintaining a pool
-of open file readers, instead of closing and opening files for each `BLOCK_RANGE`
+of open file readers, instead of closing and opening files for each BLOCK_RANGE
 operation. Even a pool of size 1 will notably improve patching performance of a single
 large file with several very localized changes.
 
@@ -67,6 +67,4 @@ compared with the reference signatures in the [signature file](../file-formats/s
 
 If there is a hash mismatch, the staging folder can simply be erased.
 
-[^1]: This is especially crucial to mod support. As long as files aren't
-modified by the developers of a particular software, their modded versions
-shouldn't block upgrades.
+[^1]: This is especially crucial to mod support. As long as files aren't modified by the developers of a particular software, their modded versions shouldn't block upgrades.

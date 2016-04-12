@@ -2,7 +2,7 @@
 # Design goals
 
 *Note: this section is more of an informal and opinionated discussion than the rest of the spec. It is
-the author's hope that it will later be useful as a reference point when someone inevitably wonders "What
+the author's hope that it will later be useful as a reference point when someone inevitably asks: "What
  in the world were they thinking?"*
 
 The wharf protocol is designed with these goals in mind:
@@ -10,14 +10,14 @@ The wharf protocol is designed with these goals in mind:
   * Minimize network bandwidth usage
   * Assume as little as possible about the payload
   * Don't require smart servers
-  * File formats should be open and highly compatible
+  * Make sure file formats are open and highly compatible
 
 The rsync algorithm[^1] is the most notable piece of prior art wharf is based on,
 and has been widely used by both prominent open-source projects (Debian, Gentoo, etc.)
 and companies alike (cf. [Dropbox's librsync fork][dropbox-librsync]).
 
 In fact, it's safe to say that many proprietary patching solutions are based
-on the same principles, but end up riddled with bugs and inefficiencies, due
+on the same principles, but end up riddled with bugs and inefficiencies due
 to the closed-source and non-essential nature of these operations to businesses[^4].
 
 As co-operator of a large game hosting platform, the author felt it was important
@@ -25,7 +25,7 @@ to provide the community with a solid open specification, suited for their needs
 and that can hopefully be adopted rapidly by different actors of the game development
 community.
 
-## Adequacy versus optimality
+## In defense of simplicity
 
 It is important to note that, for certain payloads, other algorithms may
 yield significantly better results. The author's goal is not to top any

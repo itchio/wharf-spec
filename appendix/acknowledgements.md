@@ -11,3 +11,4 @@ This spec was made by possible by the following humans:
   * [Yoan Blanc](https://github.com/greut) helped proofread the spec
   * [Elisée Maurer](https://github.com/elisee) helped proofread the spec
   * [Devon Govett](https://github.com/devongovett) helped proofread the spec
+  * [Noel Cower](https://github.com/nilium) helped proofread the spec

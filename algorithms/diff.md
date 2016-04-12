@@ -20,14 +20,14 @@ Files from the `new` version are then scanned, looking for blocks with the same 
 as those from any files of the `old` version.
 
 When similar blocks are found, we store positional information (file index within
-the container, and block offset within the file) that allows copying the block(s)
-from the old file to the new file (ie. `BLOCK_RANGE` operations).
+the container, and block offset within the file) that allows copying the blocks
+from the old file to the new file (ie. BLOCK_RANGE operations).
 
-Similar blocks are found one at a time, but `BLOCK_RANGE` operations on consecutive
+Similar blocks are found one at a time, but BLOCK_RANGE operations on consecutive
 blocks are combined to produce even smaller patches.
 
 When no similar blocks can be found, data from the new files (called `fresh data`)
-is directly written to the patch, in chunks of at most 4MB (ie. `DATA` operations).
+is directly written to the patch, in chunks of at most 4MB (ie. DATA operations).
 
 [rsync]: https://www.samba.org/~tridge/phd_thesis.pdf
 
@@ -168,13 +168,13 @@ of it as actually "rolling" on the file, "feeding" byte per byte.
 Here's how the `next` rolling hash is computed:
 
 ```
-αPush = uint32(buffer[head - 1])
+αPush = buffer[head - 1] as an uint32
 β1 = (β1 - αPop + αPush) % _M
-β2 = (β2 - uint32(head - tail) * αPop + β1) % _M
-β = β1 + _M*β2
+β2 = (β2 - (head - tail as uint32) * αPop + β1) % _M
+β = β1 + _M * β2
 ```
 
-in which
+Where:
 
   * `αPop` is the byte 'escaping' to the left of the tail (initially 0)
   * `αPush` is the byte fed to the head, from the right
@@ -201,7 +201,7 @@ hereafter referred to as "owed" data.
     |
     owed data tail
 
-When "owed" data reaches the maximum size of 4MB, a `DATA` operation is
+When "owed" data reaches the maximum size of 4MB, a DATA operation is
 emitted, to keep operation messages' sizes reasonable[^2].
 
 When the block library *does* contain entries for a given weak hash, the strong
@@ -216,7 +216,7 @@ can re-use.
 the `preferred file index` section.*
 
 When a match is found, any "owed data" is added to the operation list
-as a `SyncOp{type = DATA}`:
+as a DATA operation:
 
     +-----------------------------------------------------------+
     |                           file                            |
@@ -234,7 +234,7 @@ as a `SyncOp{type = DATA}`:
     |  DATA  | ( patch file being written )
     +--------+
 
-Then, a `SyncOp{type = BLOCK_RANGE, blockSpan = 1}` is added to the operation list
+Then, a BLOCK_RANGE operation is added to the operation list:
 
     +-----------------------------------------------------------+
     |                           file                            |
@@ -281,12 +281,14 @@ and have to use the following algorithm to recompute the weak hash of the entire
 new potential block:
 
 ```
-var a, b uint32
+a and b are uint32 variables
+span is the length of the potential block minus one, as an uint32
 
-for each byte val at index i of potential block {
-	a += uint32(val)
-	b += (uint32((length of the block)-1) - uint32(i) + 1) * uint32(val)
-}
+for (val = each byte of the potential block as an uint32)
+  i is the index of the byte within the block, as an uint32
+
+  a = a + val
+  b = b + val * (span - i + 1) as an uint32
 
 β = (a % _M) + (_M * (b % _M))
 β1 = a % _M
@@ -302,7 +304,7 @@ used the next time the head and tail move one byte to the right.
 
 It is not uncommon to find several consecutive hash matches. Those can be combined
 in a single block range by keeping an operation buffer of size 1. When a hash
-match is found, if another `BLOCK_RANGE` operation is stored in the operation buffer,
+match is found, if another BLOCK_RANGE operation is stored in the operation buffer,
 then calling the stored operation `prev` and the fresh operation `next`
 
   * If `prev.fileIndex == next.fileIndex`
@@ -353,7 +355,7 @@ non-existent data). When it reaches the end of the file, it is doomed to stay
 there while waiting for the tail to catch up.
 
 Some variants of the rsync algorithm simply send the remaining file data
-as a `DATA` operation, like so:
+as a DATA operation, like so:
 
     +-----------------------------------------------------------+
     |                           file                            |
@@ -407,12 +409,18 @@ Diffing that container with itself should produce the following operation sequen
 
                       new a.dat             new b.dat
                 +----------+----------+          +          +    
-     old a.dat  |||||||||||||||||||||||                          
+     old a.dat  |                     |                          
                 +----------+----------+----------+----------+   
-     old b.dat                        |||||||||||||||||||||||    
+     old b.dat                        |                     |    
                 +          +          +----------+----------+    
 
-Such a patch could easily be recognized by a compliant patcher as a no-op.
+*The above diagram represent which blocks from the old file (Y axis) are used
+to reconstruct new files (X axis). `+` signs represent block boundaries*
+
+Such a patch could easily be recognized by a compliant patcher as a no-op, ie.
+a patch in which every `new` file can be reconstructed from the `old` file of
+the same path, in a single BLOCK_RANGE operation spanning the entire contents
+of the file.
 
 However, a naive differ could pick only from the first file (ie. the first
 strong hash that matches)
@@ -421,9 +429,11 @@ strong hash that matches)
   * BLOCK_RANGE with **fileIndex = 0**, blockIndex = 0, blockSpan = 2
 
 
+                      /!\   non-compliant patch  /!\
+
                       new a.dat             new b.dat
                 +----------+----------+----------+----------+    
-     old a.dat  |||||||||||||||||||||||||||||||||||||||||||||
+     old a.dat  |                     |                     |
                 +----------+----------+----------+----------+   
      old b.dat                                                   
                 +          +          +          +          +    
@@ -440,11 +450,13 @@ in different orders for the first and the second block):
     * BLOCK_RANGE with fileIndex = 0, blockIndex = 1, blockSpan = 1
 
 
+                      /!\   non-compliant patch  /!\
+
                       new a.dat             new b.dat
                 +----------+          +----------+          +    
-     old a.dat  ||||||||||||          ||||||||||||           
+     old a.dat  |          |          |          |           
                 +----------+----------+----------+----------+   
-     old b.dat             ||||||||||||          ||||||||||||    
+     old b.dat             |          |          |          |    
                 +          +----------+          +----------+    
 
 
@@ -453,7 +465,6 @@ To produce the ideal patch described above, all a differ has to do is:
   * When starting to diff a file of the `new` container, look for a file in the
   `old` container with the same path
   * If it finds one, note its position in the old container's file list. That's
-  the `preferred file index`.
-  * When looking for a hash match, if it matches several strong hashes, prioritize
+  the `preferred file index`. * When looking for a hash match, if it matches several strong hashes, prioritize
   the one coming from the `preferred file`. This is made possible by the block library
   storing the file index for each block hash.
