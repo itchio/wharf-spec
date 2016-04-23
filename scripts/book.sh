@@ -2,6 +2,7 @@
 
 npm version
 npm install -g gitbook-cli
+npm install
 
 gitbook build
 
