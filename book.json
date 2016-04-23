@@ -7,7 +7,7 @@
   "plugins": ["anchors", "algolia"],
   "pluginsConfig": {
     "algolia": {
-      "index":         "butler-docs",
+      "index":         "wharf-docs",
       "applicationID": "W9CJ1LJIRZ",
       "publicKey":     "90da828ba063c6f41c6be4b0f269c955"
     }
