@@ -53,7 +53,7 @@ may be computed by reading and hashing all files from the old container.
 
 ### Reading an existing signature
 
-Hashes stored a [signature file](../file-formats/signatures.md) have two fields:
+Hashes stored in a [signature file](../file-formats/signatures.md) have two fields:
 
   * Weak hash (4 bytes)
   * Strong hash (32 bytes)
