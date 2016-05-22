@@ -15,7 +15,7 @@ the following properties:
 
 [^1]: By "full access" we mean being able to read the files' content. A typical scenario where one does not have "full access" is uploading a new version of some software, to a storage server that holds older versions of it. The storage server only has to send a series of hashes, which is much smaller than the files themselves.
 
-For the purpose of the diff algorithm, every file is split into blocks of 64kb.
+For the purpose of the diff algorithm, every file is split into blocks of 64kB.
 Files from the `new` version are then scanned, looking for blocks with the same contents
 as those from any files of the `old` version.
 
@@ -40,7 +40,7 @@ the old container must be obtained. It contains:
     * A list of directory names and their permissions
     * A list of symbolic links, their targets and permissions
     * A list of files, their permissions, and size
-  * A list of block hashes corresponding to 64kb blocks (or less) of
+  * A list of block hashes corresponding to 64kB blocks (or less) of
   all the container's files.
 
 Directories and symlinks have no contents, so they don't have block hashes.
@@ -64,15 +64,15 @@ This process is called **anchoring hashes**.
 
 For example, a container with the following files:
 
-  * foo.dat - 130kb file
-  * bar.dat - 12kb file
+  * foo.dat - 130kB file
+  * bar.dat - 12kB file
 
 ...would yield a signature with four hashes:
 
-  * size: 64kb, fileIndex: 0, blockIndex: 0
-  * size: 64kb, fileIndex: 0, blockIndex: 1
-  * size:  2kb, fileIndex: 0, blockIndex: 2
-  * size: 12kb, fileIndex: 1, blockIndex: 0
+  * size: 64kB, fileIndex: 0, blockIndex: 0
+  * size: 64kB, fileIndex: 0, blockIndex: 1
+  * size:  2kB, fileIndex: 0, blockIndex: 2
+  * size: 12kB, fileIndex: 1, blockIndex: 0
 
 Storing the file index, block index, and block size in signature files isn't
 necessary, since the container's file list gives all the information needed to
@@ -122,7 +122,7 @@ while (hash = read a BlockHash message from the signature file)
   block_index = block_index + 1
 ```
 
-*Note: blocks that are exactly 64kb large have a short_size of 0, since
+*Note: blocks that are exactly 64kB large have a short_size of 0, since
 it is a very common case, and 0 is the default value of an integer in protobuf,
 and default values don't take up any space in protobuf encoding.*
 
@@ -146,7 +146,7 @@ head and a tail:
     +-----------------------------------------------------------+
     |                           file                            |
     +-----------------------------------------------------------+
-    ^     ( 64kb )      ^                                       ^
+    ^     ( 64kB )      ^                                       ^
     |                   |                                       |
     tail              head                                    EOF
     |                   |
@@ -190,7 +190,7 @@ hereafter referred to as "owed" data.
     +-----------------------------------------------------------+
     |                           file                            |
     +-----------------------------------------------------------+
-    ^        ^     ( 64kb )      ^                              ^
+    ^        ^     ( 64kB )      ^                              ^
     |        |                   |                              |
     |        tail              head                           EOF
     |        |
@@ -221,7 +221,7 @@ as a DATA operation:
     +-----------------------------------------------------------+
     |                           file                            |
     +-----------------------------------------------------------+
-    ^        ^     ( 64kb )      ^                              ^
+    ^        ^     ( 64kB )      ^                              ^
     |        |                   |                              |
     |        tail              head                           EOF
     |        |                   |
@@ -239,7 +239,7 @@ Then, a BLOCK_RANGE operation is added to the operation list:
     +-----------------------------------------------------------+
     |                           file                            |
     +-----------------------------------------------------------+
-    ^        ^     ( 64kb )      ^                              ^
+    ^        ^     ( 64kB )      ^                              ^
     |        |                   |                              |
     |        tail              head                           EOF
     |        |                   |
@@ -258,7 +258,7 @@ the owed data tail is adjusted as well
     +-----------------------------------------------------------+
     |                           file                            |
     +-----------------------------------------------------------+
-    ^                            ^     ( 64kb )      ^          ^
+    ^                            ^     ( 64kB )      ^          ^
     |                            |                   |          |
     |                            tail              head       EOF
     |                            |                   |
@@ -314,7 +314,7 @@ then calling the stored operation `prev` and the fresh operation `next`
     +-----------------------------------------------------------+
     |                           file                            |
     +-----------------------------------------------------------+
-    ^                            ^     ( 64kb )      ^          ^
+    ^                            ^     ( 64kB )      ^          ^
     |                            |                   |          |
     |                            tail              head       EOF
     |                            |                   |
@@ -334,7 +334,7 @@ by one.
     +-----------------------------------------------------------+
     |                           file                            |
     +-----------------------------------------------------------+
-    ^                            ^     ( 64kb )      ^          ^
+    ^                            ^     ( 64kB )      ^          ^
     |                            |                   |          |
     |                            tail              head       EOF
     |                            |                   |
@@ -398,8 +398,8 @@ won't overwrite each other, but the generated patch might be unnecessarily compl
 
 Imagine a container with two identical files:
 
-  * a.dat, 128kb
-  * b.dat, 128kb
+  * a.dat, 128kB
+  * b.dat, 128kB
 
 Diffing that container with itself should produce the following operation sequence:
 

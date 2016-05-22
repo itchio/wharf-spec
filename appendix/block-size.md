@@ -1,7 +1,7 @@
 
 # Block size
 
-The 64kb block size was chosen empirically after running a few diffs on sample
+The 64kB block size was chosen empirically after running a few diffs on sample
 data[^1]. The algorithm would work with other block sizes, and adjusting the
 block size might be required for some payloads.
 
