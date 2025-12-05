@@ -8,6 +8,6 @@
   },
   "author": "Amos Wenger <amos@itch.io>",
   "devDependencies": {
-    "honkit": "^5.1.0"
+    "honkit": "^6.1.4"
   }
 }
