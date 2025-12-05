@@ -2,7 +2,5 @@
   "title": "The wharf protocol specification",
   "description": "Wharf is a protocol to incrementally transfer software builds quickly.",
   "author": "Amos Wenger",
-  "language": "en",
-  "gitbook": "3.0.0-pre.9",
-  "plugins": ["anchors"]
+  "language": "en"
 }
