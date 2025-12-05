@@ -33,7 +33,7 @@ a solid spec can be achieved and yield numerous highly-compatible implementation
 
 The latest version of this book is available at:
 
-  * https://docs.itch.ovh/wharf/master/index.html
+  * https://itch.io/docs/wharf
 
 Contributions can be made to it by submitting pull requests or issues on its GitHub repository:
 
