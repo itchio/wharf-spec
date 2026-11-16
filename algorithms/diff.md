@@ -56,7 +56,7 @@ may be computed by reading and hashing all files from the old container.
 Hashes stored in a [signature file](../file-formats/signatures.md) have two fields:
 
   * Weak hash (4 bytes)
-  * Strong hash (32 bytes)
+  * Strong hash (16 bytes, MD5)
 
 When reading hashes sequentially from a signature file, one must keep track
 of where in a file and which file of the container the current hash corresponds to.
@@ -89,42 +89,35 @@ and block size, given a container.
 ```lua
 full_block_size = 64 * 1024
 
-file_index = 0
-block_index = 0
-block_size = full_block_size
-byte_offset = 0
+for file_index, file in container.files
+  num_blocks = ceil(file.size / full_block_size)
 
-while (hash = read a BlockHash message from the signature file)
-  size_diff = (size of file at file_index) - byte_offset
-  short_size = 0
+  if num_blocks == 0
+    -- empty files have one hash, of a zero-length block
+    hash = read a BlockHash message from the signature file
+    add AnchoredBlockHash(file_index, 0, 0, hash.weak_hash, hash.strong_hash) to block library
 
-  if (size_diff < 0)
-    -- moved past the end of the file
-    byte_offset = 0
-    block_index = 0
-    file_index = file_index + 1
-    size_diff = (size of file at file_index) - byte_offset
+  for block_index = 0, num_blocks - 1
+    hash = read a BlockHash message from the signature file
 
-  if (size_diff < full_block_size)
-    -- last block of the file
-    short_size = size_diff
-  else
     short_size = 0
+    if (block_index + 1) * full_block_size > file.size
+      -- last block of the file, and shorter than full_block_size
+      short_size = file.size % full_block_size
 
-  add AnchoredBlockHash(
-    file_index,
-    block_index,
-    short_size,
-    hash.weak_hash,
-    hash.strong_hash) to block library
-
-  byte_offset = byte_offset + block_size
-  block_index = block_index + 1
+    add AnchoredBlockHash(
+      file_index,
+      block_index,
+      short_size,
+      hash.weak_hash,
+      hash.strong_hash) to block library
 ```
 
-*Note: blocks that are exactly 64kB large have a short_size of 0, since
-it is a very common case, and 0 is the default value of an integer in protobuf,
-and default values don't take up any space in protobuf encoding.*
+*Note: blocks that are exactly 64kB large have a short_size of 0. A
+zero-length block also has a short_size of 0, but the differ never looks one
+up, since it never hashes an empty buffer. short_size is not stored in the
+signature file. The differ only matches a candidate block against hashes
+with the same short_size.*
 
 ## Constructing the block library
 
